@@ -8,7 +8,6 @@ vlist = []
 blist = []
 clist = []
 coordlist = []
-polygons = []
 
 #functions color protection
 
@@ -47,7 +46,7 @@ def skew_matrix(sx, sy):
            [sy, 1, 0],
            [0, 0, 1]]
 #multiplying matrix
-def matrix_multiply(mat, mat2):
+def matrix_multiply(mat1, mat2):
     result = [[sum(a*b for a, b in zip(row, col)) for col in zip(*mat2)] for row in mat1]
     return result
 
@@ -88,31 +87,46 @@ def skew_polygons(polygons, sx, sy):
 #function to apply transformation to the polygons
 def transform_polygons(polygons, translation, rotation_angle, scaling_factors, skew_factors):
     transformed_polygons = []
-    translation_matrix = translation_matrix(*translation)
-    rotation_matrix = rotation_matrix(rotation_angle)
-    scaling_matrix = scaling_matrix(*scaling_factors)
-    skew_matrix = skew_matrix(*skew_factors)
+    translation_matrix_func = translation_matrix(*translation)
+    rotation_matrix_func = rotation_matrix(rotation_angle)
+    scaling_matrix_func = scale_matrix(*scaling_factors)  # Use scale_matrix instead of scaling_matrix
+    skew_matrix_func = skew_matrix(*skew_factors)
 
-    combined_matrix = matrix_multiply(translation_matrix, rotation_matrix)
-    combined_matrix = matrix_multiply(combined_matrix, scaling_matrix)
-    combined_matrix = matrix_multiply(combined_matrix, skew_matrix)
+    combined_matrix = matrix_multiply(translation_matrix_func, rotation_matrix_func)
+    combined_matrix = matrix_multiply(combined_matrix, scaling_matrix_func)
+    combined_matrix = matrix_multiply(combined_matrix, skew_matrix_func)
 
     for polygon in polygons:
         transformed_polygon = apply_transform(combined_matrix, polygon)
         transformed_polygons.append(transformed_polygon)
     return transformed_polygons
 
-
 #create function to ask for inputs defaults to 1 if no inputs
 def userinputtss():
-    while True:
-        tx = float(input("Enter translation in x direction: "))
-        ty = float(input("Enter translation in y direction: "))
-        rotation_angle = float(input("Enter rotation angle (in degrees): "))
-        sx = float(input("Enter scaling factor in x direction: "))
-        sy = float(input("Enter scaling factor in y direction: "))
-        sx2 = float(input("Enter skew factor in x direction: "))
-        sy2 = float(input("Enter skew factor in y direction: "))
+        print()
+        print("Please enter float values.")
+        print()
+        while True:
+            try:
+                tx = float(input("Enter translation in x direction: "))
+                ty = float(input("Enter translation in y direction: "))
+                rotation_angle = float(input("Enter rotation angle (in degrees): "))
+                break  # Break out of the loop if input conversion is successful
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
+                
+        print()
+        print("If there is no change to scaling / skewing, put value as 1")
+        print()
+        while True:
+            try:
+                sx = float(input("Enter scaling factor in x direction: "))
+                sy = float(input("Enter scaling factor in y direction: "))
+                sx2 = float(input("Enter skew factor in x direction: "))
+                sy2 = float(input("Enter skew factor in y direction: "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
         return  tx, ty, sx, sy, sx2, sy2, rotation_angle
 
