@@ -106,10 +106,14 @@ def userinputtss():
         print()
         print("Please enter float values.")
         print()
+        print("Default values are 0. If no changes required, enter the value 0.")
+        print()
         while True:
             try:
                 tx = float(input("Enter translation in x direction: "))
                 ty = float(input("Enter translation in y direction: "))
+                sx2 = float(input("Enter skew factor in x direction: "))
+                sy2 = float(input("Enter skew factor in y direction: "))
                 rotation_angle = float(input("Enter rotation angle (in degrees): "))
                 break  # Break out of the loop if input conversion is successful
             except ValueError:
@@ -122,8 +126,6 @@ def userinputtss():
             try:
                 sx = float(input("Enter scaling factor in x direction: "))
                 sy = float(input("Enter scaling factor in y direction: "))
-                sx2 = float(input("Enter skew factor in x direction: "))
-                sy2 = float(input("Enter skew factor in y direction: "))
                 break
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
@@ -264,15 +266,13 @@ while True:
         while True:
             print("Choose one of the following options.")
             print("1. Choose another file.")
-            print("2. Transform current file.")
-            print("3. Accept current drawing.")
+            print("2. Accept current drawing.")
                 
             neworend = input("Your selection: ")
             if neworend == "1":
                 print()
-            elif neworend == "2":
                 break
-            elif neworend == "3":
+            elif neworend == "2":
                 turtle.stamp()
                 turtle.hideturtle()
                 break
@@ -300,6 +300,10 @@ while True:
                     else:
                         coordinates = vertices.split()
                         vlist.append([float(coordinates[0]), float(coordinates[1])])
+
+                    #manual transform
+                    tx, ty, sx, sy, sx2, sy2, rotation_angle = userinputtss()
+                    transformed_vlistmanual = transform_polygons(vlist, (tx, ty), rotation_angle, (sx, sy), (sx2, sy2))
                     
                 while True:
                     qcurve = str(input("Is there any curves in the polygon to be drawn? (Y/N): "))
@@ -316,15 +320,16 @@ while True:
                         break
                     else:
                         print("Invalid input try again.")
-                polygondraw(blist, vlist)
+                polygondraw(blist, transformed_vlistmanual)
                 clist = vlist
                 blist.clear()
-                vlist.clear()
+                transformed_vlistmanual.clear()
     #crash prevention        
     else:
         print()
         print("Input error, please try again.")
         print()
+        
     
     while True:
         restartopt = input("Would you like to restart? (Y/N): ")
@@ -334,13 +339,24 @@ while True:
             print()
             print("Program is restarting, clearing all data...")
             print()
+            break
+        
         elif restartopt == "N":
-            turtle.done()
+            
             print()
             print("Thank you for using this program.")
+            turtle.done()
             break
-
+        
         else:
             print()
             print("Error, please try again.")
-    break    
+       
+    if restartopt == "Y":
+        print()
+        vlist.clear()
+        blist.clear()
+        clist.clear()
+    elif restartopt == "N":
+        break
+    
