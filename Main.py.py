@@ -8,6 +8,7 @@ vlist = []
 blist = []
 clist = []
 coordlist = []
+polygons = []
 
 #functions color protection
 
@@ -104,37 +105,16 @@ def transform_polygons(polygons, translation, rotation_angle, scaling_factors, s
 
 #create function to ask for inputs defaults to 1 if no inputs
 def userinputtss():
-    print()
-    print("Select from the menu below.")
-    print("1. Transform")
-    print("2. Scale")
-    print("3. Skew")
-    print("4. Normal")
-    optmodifier = input("Your selection: ")
-    if optmodifier == "1":
+    while True:
         tx = float(input("Enter translation in x direction: "))
         ty = float(input("Enter translation in y direction: "))
         rotation_angle = float(input("Enter rotation angle (in degrees): "))
-
-    elif optmodifier == "2":
         sx = float(input("Enter scaling factor in x direction: "))
         sy = float(input("Enter scaling factor in y direction: "))
-    elif optmodifier == "3":
         sx2 = float(input("Enter skew factor in x direction: "))
         sy2 = float(input("Enter skew factor in y direction: "))
-    elif optmodifier == "4":
-        tx = 1
-        ty = 1
-        sx = 1
-        sy = 1
-        sx2 = 1
-        sy2 = 1
-        rotation_angle = 0
 
         return  tx, ty, sx, sy, sx2, sy2, rotation_angle
-    else:
-        print()
-        print("Please verify input is correct. Program accepts only 1, 2, 3 or 4")
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Drawing functions
@@ -258,9 +238,9 @@ while True:
                     with open(filename, "r") as f:
                         data = f.read()
                         blists, vlists = parse_data(data)
-                        userinputtss()
-                        transformed_polygons = transform_polygons(polygons, (tx, ty), rotation_angle, (sx, sy), (sx2, sy2))
-                        draw(blists, vlists)
+                        tx, ty, sx, sy, sx2, sy2, rotation_angle = userinputtss()
+                        transformed_vlists = transform_polygons(vlists, (tx, ty), rotation_angle, (sx, sy), (sx2, sy2))
+                        draw(blists, transformed_vlists)
                         turtle.hideturtle()
                         break
                 except FileNotFoundError:
